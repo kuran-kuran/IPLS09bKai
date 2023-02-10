@@ -1,24 +1,16 @@
-2023年02月10日
+2021年01月30日
 
-# IPLセレクタ改 for MZ-80B/2000
+・「IPLセレクター Ver.0.9b」について
 
-## はじめに
-これはHideki Suga(@junk_suga)さんが作成したMZ-80B/2000のIPLセレクタをkuran_kuranが改良(?)したものです。
-私が手を入れた事によって予期せぬバグも一緒に入った可能性があります。
+１．ソフト説明
+　mz-80B/2000(2200)のテープからIPL起動するソフトを 「ファイル・コンバータ」や「Filing CMT」で
+ディスクに セーブしておき、それらを選択し起動できます。
+　１ディスク最大26ファイルまで選択可能です。27ファイル目からは無視します。
+　分割ロードのプログラムには対応していません。(1ファイル化すればOK)
 
-オリジナルはこちらです
-http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
-
-## ソフト説明
- MZ-80B/2000/2200のテープからIPL起動するソフトをディスクから選択して起動できます。
-元のIPLセレクタでは64416(FBA0H)バイトまでのファイルが起動できましたが65536バイトのファイルが起動できるようになりました。
-また/を選択することによりMZ-1R12から起動することができるようになりました。
-1ディスクにつき最大26個までファイルを選択できます。27個目以降のファイルは無視されます。
-分割ロードのプログラムには対応していません。
-
-## IPLセレクタの使用方法
+２．IPLセレクターの使用方法
 　(1) 解凍後、次のどれかで起動ディスクを作成して下さい。
-　　　(a) NDittなどで IPLS_0_9Kai.d88 をブランクディスクに書き込みます。
+　　　(a) DITTなどで IPLS_0_9.D88 をブランクディスクに書き込みます。
 　　　(b) IPL-SEL-MAKER.mzt をモニタに(何とか)読み込ませ、フォーマット済みのスレイブディスクにBOOTプログラムを書き込みます。
 　　　　　この方法は、旧バージョンのIPLセレクターのバージョンアップにも使用できます。
 
@@ -26,36 +18,25 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 
 　(3) 出来上がったディスクをセットし、IPLリセットします。
 
-　(4) 画面に表示されたファイルから起動したいものに該当するキー(A～Z,/)を押します。
+　(4) 画面に表示されたファイルから起動したいものに該当するキー（Ａ～Ｚ）を押します。
 
-## 配布内容
-　IPLS_0_9bKai2D.D88  : IPLセレクタVer0.9bKai 2D 280KB BOOTディスク・イメージ
-　IPLS_0_9bKai2DD.D88 : IPLセレクタVer0.9bKai 2DD 640KB BOOTディスク・イメージ
-　IPL-SEL-MAKER.mzt   : IPLセレクタ・メーカー テープイメージ
-　IPLSEL09.ASM        : IPLセレクタVer0.9bKai ソース
-　IPL-SEL-MAKER.ASM   : IPLセレクタ・メーカー ソース
-  READTAIL.ASM        : IPLセレクタVer0.9bKai 後半部分ロードソース
-　Make.bat            : コンパイル用バッチファイル(参考)
-  Clean.bat           : ビルドクリーン用のバッチファイル(参考)
+３．配布内容
+　IPLS_0_9.D88      : IPLセレクターVer0.9b BOOTディスク・イメージ
+　IPL-SEL-MAKER.mzt : IPLセレクター・メーカー テープイメージ
+　IPLSEL09.ASM      : IPLセレクターVer0.9b ソース
+　IPL-SEL-MAKER.ASM : IPLセレクター・メーカー ソース
+　Make.bat          : コンパイル用バッチファイル(参考)
 
-※アセンブラは、紅茶羊羹(@youkan700)さんのZ80ASを使っています。
+※コンパイラは、紅茶羊羹(@youkan700)さんの Z80ASを使っています。
 
-## 作者
-- Twitter
+４．作者への連絡方法
+　Twitter にてご連絡下さい。
+　@junk_suga
 
-https://twitter.com/kuran_kuran
-
-- アルゴの記憶
-
-https://daimonsoft.info/argo/
-
-※IPLセレクタ改バージョンについてはHideki Sugaさんではなく私kuran_kuranにお問い合わせください。
-
-## ライセンスについて
-ライセンスは元のIPLセレクタに準拠します
+５．ライセンスについて
 
 ======================================================================
-Copyright 2023 kuran_kuran (@kuran_kuran)
+Copyright 2021 Hideki Suga (@junk_suga)
 
 ソースコード形式かバイナリ形式か、変更するかしないかを問わず、以下の条件を満たす場合に限り、再頒布および使用が許可されます。
 
@@ -67,7 +48,7 @@ Copyright 2023 kuran_kuran (@kuran_kuran)
 
 
 ======================================================================
-Copyright 2023 kuran_kuran (@kuran_kuran)
+Copyright 2021 Hideki Suga (@junk_suga)
 
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

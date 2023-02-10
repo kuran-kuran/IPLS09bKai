@@ -1,8 +1,8 @@
 2023年02月10日
 
-# IPLセレクタ改 for MZ-80B/2000
+IPLセレクタ改 for MZ-80B/2000
 
-## はじめに
+■はじめに
 これはHideki Suga(@junk_suga)さんが作成したMZ-80B/2000のIPLセレクタをkuran_kuranが改良(?)したものです。
 私が手を入れた事によって予期せぬバグも一緒に入った可能性があります。
 
@@ -16,7 +16,7 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 1ディスクにつき最大26個までファイルを選択できます。27個目以降のファイルは無視されます。
 分割ロードのプログラムには対応していません。
 
-## IPLセレクタの使用方法
+■IPLセレクタの使用方法
 　(1) 解凍後、次のどれかで起動ディスクを作成して下さい。
 　　　(a) NDittなどで IPLS_0_9Kai.d88 をブランクディスクに書き込みます。
 　　　(b) IPL-SEL-MAKER.mzt をモニタに(何とか)読み込ませ、フォーマット済みのスレイブディスクにBOOTプログラムを書き込みます。
@@ -28,7 +28,7 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 
 　(4) 画面に表示されたファイルから起動したいものに該当するキー(A～Z,/)を押します。
 
-## 配布内容
+■配布内容
 　IPLS_0_9bKai2D.D88  : IPLセレクタVer0.9bKai 2D 280KB BOOTディスク・イメージ
 　IPLS_0_9bKai2DD.D88 : IPLセレクタVer0.9bKai 2DD 640KB BOOTディスク・イメージ
 　IPL-SEL-MAKER.mzt   : IPLセレクタ・メーカー テープイメージ
@@ -40,7 +40,7 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 
 ※アセンブラは、紅茶羊羹(@youkan700)さんのZ80ASを使っています。
 
-## 作者
+■作者
 - Twitter
 
 https://twitter.com/kuran_kuran
@@ -51,7 +51,7 @@ https://daimonsoft.info/argo/
 
 ※IPLセレクタ改バージョンについてはHideki Sugaさんではなく私kuran_kuranにお問い合わせください。
 
-## ライセンスについて
+■ライセンスについて
 ライセンスは元のIPLセレクタに準拠します
 
 ======================================================================
