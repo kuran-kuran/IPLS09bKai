@@ -29,6 +29,7 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 　(4) 画面に表示されたファイルから起動したいものに該当するキー(A～Z,/)を押します。
 
 ## 配布内容
+```
 　IPLS_0_9bKai2D.D88  : IPLセレクタVer0.9bKai 2D 280KB BOOTディスク・イメージ
 　IPLS_0_9bKai2DD.D88 : IPLセレクタVer0.9bKai 2DD 640KB BOOTディスク・イメージ
 　IPL-SEL-MAKER.mzt   : IPLセレクタ・メーカー テープイメージ
@@ -37,7 +38,7 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
   READTAIL.ASM        : IPLセレクタVer0.9bKai 後半部分ロードソース
 　Make.bat            : コンパイル用バッチファイル(参考)
   Clean.bat           : ビルドクリーン用のバッチファイル(参考)
-
+```
 ※アセンブラは、紅茶羊羹(@youkan700)さんのZ80ASを使っています。
 
 ## 作者
