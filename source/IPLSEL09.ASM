@@ -816,12 +816,7 @@ READ2ND:
 	POP	HL
 	POP	DE
 	POP	BC
-	; DEが1FFFならFFFFHにRAMFFFFを書き込む
-	LD	A, (RAMFFFF)
-	LD	C, A
-	; 8000hから実行
-EXECUTE8000:
-	JP	08000h
+	JR	CHECK_RAMFFFF
 MACHINE_MZ80B:
 	; 8000h～8400h(1KB)までをTVRAM前半にバックアップする
 	LD	HL, 08000H
@@ -844,6 +839,18 @@ MACHINE_MZ80B:
 	POP	HL
 	POP	DE
 	POP	BC
+CHECK_RAMFFFF:
+	; DEが1FFFならFFFFHにRAMFFFFを書き込む
+	LD	A, D
+	CP	01FH
+	JR	NZ, EXECUTE8000
+	LD	A, E
+	CP	0FFH
+	JR	NZ, EXECUTE8000
+	LD	A, (RAMFFFF)
+	LD	C, A
+	; 8000hから実行
+EXECUTE8000:
 	JP	08000h
 
 ;	TVRAMにバックアップしたデータを戻して読込んだプログラムへの制御移行（リセットを使用）
@@ -992,7 +999,7 @@ MZ2000:	DB	"IPL ｾﾚｸﾀ- << MZ-2000/2200 ﾓ-ﾄﾞ >>       "
 MZ2500:	DB	"IPL ｾﾚｸﾀ- << MZ-2500 ﾓ-ﾄﾞ >>            "
 	DB	00DH
 ;
-VERS:	DB	"  Ver0.9bKai 2022.02.10 (c) kuran-kuran"
+VERS:	DB	"  Ver0.9bKai 2022.02.14 (c) kuran-kuran"
 	DB	00DH
 ;
 MZ25W:	DB	"MZ-2500ﾓ-ﾄﾞﾃﾞﾉ ﾄﾞｳｻｶｸﾆﾝﾊ ｼﾃｲﾏｾﾝ m(- -;)m"
