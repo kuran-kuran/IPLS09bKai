@@ -1,6 +1,6 @@
-2023年02月10日
+2023年02月14日
 
-IPLセレクタ改 for MZ-80B/2000
+IPLセレクタ改 for MZ-80B/2000 v.1.0.1
 
 ■はじめに
 これはHideki Suga(@junk_suga)さんが作成したMZ-80B/2000のIPLセレクタをkuran_kuranが改良(?)したものです。
@@ -9,7 +9,7 @@ IPLセレクタ改 for MZ-80B/2000
 オリジナルはこちらです
 http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 
-## ソフト説明
+■ ソフト説明
  MZ-80B/2000/2200のテープからIPL起動するソフトをディスクから選択して起動できます。
 元のIPLセレクタでは64416(FBA0H)バイトまでのファイルが起動できましたが65536バイトのファイルが起動できるようになりました。
 また/を選択することによりMZ-1R12から起動することができるようになりました。
@@ -28,6 +28,12 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 
 　(4) 画面に表示されたファイルから起動したいものに該当するキー(A～Z,/)を押します。
 
+■注意
+mztファイルは65535バイトまでしか対応していないためそのまま書き込むとRAMのFFFFhにデータが書き込まれません。
+そこでファイルサイズが65535バイトの場合はファイルサイズは65535バイト、ディレクトリ領域13hの未使用領域に最後の1バイトを設定する事によって65536バイトに対応しています。
+ディレクトリ領域13hの未使用領域の編集はMZDiskExplorer 2.1.1にて対応しています。
+また、MZDiskExplorer 2.1.1に65536バイトのバイナリファイルをドロップする事でも未使用領域が設定されます。
+
 ■配布内容
 　IPLS_0_9bKai2D.D88  : IPLセレクタVer0.9bKai 2D 280KB BOOTディスク・イメージ
 　IPLS_0_9bKai2DD.D88 : IPLセレクタVer0.9bKai 2DD 640KB BOOTディスク・イメージ
@@ -37,6 +43,8 @@ http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
   READTAIL.ASM        : IPLセレクタVer0.9bKai 後半部分ロードソース
 　Make.bat            : コンパイル用バッチファイル(参考)
   Clean.bat           : ビルドクリーン用のバッチファイル(参考)
+  IPLS09bKai.txt      : このファイル
+  ReadMe.txt          : 元のreadme
 
 ※アセンブラは、紅茶羊羹(@youkan700)さんのZ80ASを使っています。
 
