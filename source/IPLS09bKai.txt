@@ -57,7 +57,7 @@ https://twitter.com/kuran_kuran
 
 https://daimonsoft.info/argo/
 
-※IPLセレクタ改バージョンについてはHideki Sugaさんではなく私kuran_kuranにお問い合わせください。
+※IPLセレクタ改についてはHideki Sugaさんではなく私kuran_kuranにお問い合わせください。
 
 ■ライセンスについて
 ライセンスは元のIPLセレクタに準拠します
