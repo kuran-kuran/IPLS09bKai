@@ -212,12 +212,17 @@ MZ25S:
 	OUT	(0C8H),A
 	IN	A,(0C9H)
 	BIT	6,A		; Resolution SW 0:H(400) 1:L(200)
-	JR	Z,MZ25SE	; 400 Line?
+	JR	Z,MZ25S_400	; 400 Line?
 ;
 	LD	A,'L'		; 200 Line
 	LD	(MZ25HL),A
 	LD	A,001H		; All characters are displayed in 8 lines
 	OUT	(0F7H),A
+	JR	MZ25SE
+;
+MZ25S_400:
+	LD	A,'H'		; 400 Line
+	LD	(MZ25HL),A
 ;
 MZ25SE:
 	LD	HL,VRAM25	; Charactor VRAM Address
