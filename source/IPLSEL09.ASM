@@ -212,12 +212,17 @@ MZ25S:
 	OUT	(0C8H),A
 	IN	A,(0C9H)
 	BIT	6,A		; Resolution SW 0:H(400) 1:L(200)
-	JR	Z,MZ25SE	; 400 Line?
+	JR	Z,MZ25S_400	; 400 Line?
 ;
 	LD	A,'L'		; 200 Line
 	LD	(MZ25HL),A
 	LD	A,001H		; All characters are displayed in 8 lines
 	OUT	(0F7H),A
+	JR	MZ25SE
+;
+MZ25S_400:
+	LD	A,'H'		; 400 Line
+	LD	(MZ25HL),A
 ;
 MZ25SE:
 	LD	HL,VRAM25	; Charactor VRAM Address
@@ -262,12 +267,6 @@ B1SCTE:
 	CP	MD2500
 	JR	NZ,NOT2500
 ;
-;	MZ-2500モード表示
-	LD	DE,MZ2500
-	LD	HL,0
-	LD	BC,40
-	CALL	VRDISP
-;
 ;	ワーニング表示
 	LD	DE,MZ25W
 	LD	HL,40 * 18
@@ -282,6 +281,8 @@ B1SCTE:
 	LD	(ERFDUB + 2),A
 	LD	A,00DH
 	LD	(ERFDLF),A
+	LD	DE,MZ2500
+	JR	VERDSP
 ;
 ;
 NOT2500:
@@ -787,9 +788,9 @@ READ2ND:
 	LD	A, (DIRNO)
 	LD	B, A
 	; 画面を消す
-	IN	A,(0E2H)
-	OR	001H
-	OUT	(0E2H),A
+;	IN	A,(0E2H)
+;	OR	001H
+;	OUT	(0E2H),A
 	; プログラム後半読み込み処理準備
 	PUSH	BC
 	PUSH	DE
@@ -798,14 +799,14 @@ READ2ND:
 	LD	A,(MODE)
 	CP	MD2000
 	JR	NZ,MACHINE_MZ80B
-	; 8000h～8400h(1KB)までをTVRAM前半にバックアップする
+	; 8000h～8400h(1KB)までをTVRAM後半にバックアップする
 	LD	HL, 08000H
-	LD	DE, VRAM
+	LD	DE, VRAM+1024
 	LD	BC, 1024
 	LDIR
 	; リセットプログラムをTVRAM後半に転送する
 	LD	HL, RESTORE_RESET
-	LD	DE, VRAM + 1024
+	LD	DE, VRAM + 1000
 	LD	BC, RESTORE_RESET_END - RESTORE_RESET
 	LDIR
 	; 8000hにプログラムを転送して実行する
@@ -818,14 +819,14 @@ READ2ND:
 	POP	BC
 	JR	CHECK_RAMFFFF
 MACHINE_MZ80B:
-	; 8000h～8400h(1KB)までをTVRAM前半にバックアップする
+	; 8000h～8400h(1KB)までをTVRAM後半にバックアップする
 	LD	HL, 08000H
-	LD	DE, VRAM8L
+	LD	DE, VRAM8L+1024
 	LD	BC, 1024
 	LDIR
 	; リセットプログラムをTVRAM後半に転送する
 	LD	HL, RESTORE_RESET
-	LD	DE, VRAM8L + 1024
+	LD	DE, VRAM8L + 1000
 	LD	BC, RESTORE_RESET_END - RESTORE_RESET
 	LDIR
 	; 8000hにプログラムを転送して実行する
@@ -835,32 +836,24 @@ MACHINE_MZ80B:
 	LDIR
 	; SET 6,AをRES 6,Aに変更して8000hから実行
 	LD	A, 0B7H
-	LD	(08027H),A
+	LD	(08031H),A
 	POP	HL
 	POP	DE
 	POP	BC
 CHECK_RAMFFFF:
-	; DEが1FFFならFFFFHにRAMFFFFを書き込む
-	LD	A, D
-	CP	01FH
-	JR	NZ, EXECUTE8000
-	LD	A, E
-	CP	0FFH
-	JR	NZ, EXECUTE8000
 	LD	A, (RAMFFFF)
 	LD	C, A
 	; 8000hから実行
-EXECUTE8000:
 	JP	08000h
 
 ;	TVRAMにバックアップしたデータを戻して読込んだプログラムへの制御移行（リセットを使用）
 RESTORE_RESET:
-	LD	HL, VRAM
+	LD	HL, VRAM+1024
 	LD	DE, 08000H
 	LD	BC, 1024
 	LDIR
 	IN	A, (0E2H)
-	RES	0, A		; 画面表示
+;	RES	0, A		; 画面表示
 	SET	1, A 		; ノーマルリセット
 	OUT	(0E2H), A
 START4:	JR	START4		; 永久ループ
@@ -999,7 +992,7 @@ MZ2000:	DB	"IPL ｾﾚｸﾀ- << MZ-2000/2200 ﾓ-ﾄﾞ >>       "
 MZ2500:	DB	"IPL ｾﾚｸﾀ- << MZ-2500 ﾓ-ﾄﾞ >>            "
 	DB	00DH
 ;
-VERS:	DB	"  Ver0.9bKai 2022.02.14 (c) kuran-kuran"
+VERS:	DB	"  Ver0.9bKai 2022.02.15 (c) kuran-kuran"
 	DB	00DH
 ;
 MZ25W:	DB	"MZ-2500ﾓ-ﾄﾞﾃﾞﾉ ﾄﾞｳｻｶｸﾆﾝﾊ ｼﾃｲﾏｾﾝ m(- -;)m"
