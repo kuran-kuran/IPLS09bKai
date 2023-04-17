@@ -7,7 +7,7 @@
 私が手を入れた事によって予期せぬバグも一緒に入った可能性があります。
 
 オリジナルはこちらです  
-http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
+https://web.archive.org/web/20210130154551/http://www.ne.jp/asahi/suga/junkyard/mz/mzsoft/iplsel/index.html
 
 ## ソフト説明
 MZ-80B/2000/2200/2500のテープからIPL起動するソフトをディスクから選択して起動できます。
