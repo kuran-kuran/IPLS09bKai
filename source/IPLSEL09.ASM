@@ -99,13 +99,13 @@ IPLPRO: ; 000H-
 	DW	00001H		; Load start sector
 	; 020H-
 				; Memory block column to load (MZ-2500 only)
-	DB	008H,0FFH,0FFH,0FFH
+	DB	002H,0FFH,0FFH,0FFH
 	DB	0FFH,0FFH,0FFH,0FFH
 	DB	0FFH,0FFH,0FFH,0FFH
 	DB	0FFH,0FFH,0FFH,0FFH
 	; 030H-
 				; Memory block column to Execution (MZ-2500 only)
-	DB	8,9,10,11,12,13,14
+	DB	2,2,3,4,5,6,7,8
 	;
 IPLPROE:
 	DS	B1SCT - IPLPROE	; spacer
@@ -267,11 +267,12 @@ B1SCTE:
 	CP	MD2500
 	JR	NZ,NOT2500
 ;
+;	MZ-2500時の処理
 ;	ワーニング表示
-	LD	DE,MZ25W
-	LD	HL,40 * 18
-	LD	BC,40
-	CALL	VRDISP
+;	LD	DE,MZ25W
+;	LD	HL,40 * 18
+;	LD	BC,40
+;	CALL	VRDISP
 ;
 ;	アンダーバー／トップバー切替
 ;	2500モード時は、'_'がそのまま表示されるので書換え
@@ -604,7 +605,7 @@ MZ1R12_READ_LOOP:
 	LD	A,B			; BCが0になるまでLOOPする
 	OR	C
 	JP	NZ, MZ1R12_READ_LOOP
-	JP	NOTREAD2ND		; 通常起動へ
+	JP	RESET			; 通常起動へ
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; セレクトされたディレクトリへのオフセット計算           ;;
@@ -636,10 +637,6 @@ OFLEX:	LD	(FOFS),HL
 	LD	HL,40 * 21
 	LD	BC,13
 	CALL	VRDISP
-;
-; ロードアドレスは 00000H 固定
-;
-	LD	IX,WKIX
 ;
 ; ワークエリア設定
 ;
@@ -674,9 +671,10 @@ OFLEX:	LD	(FOFS),HL
 	LD	A,(HL)
 	LD	(RAMFFFF),A
 ;
-; 読込みサイズセット
+; (IY+2, IX+3) 読込みサイズセット
 ;
 	POP	HL
+	PUSH	HL
 	LD	DE,00014H
 	ADD	HL,DE
 	LD	A,(HL)
@@ -686,6 +684,31 @@ OFLEX:	LD	(FOFS),HL
 	LD	A,(HL)
 	LD	(IY+3),A
 	LD	B,A
+;
+; IX 読込開始アドレス
+;
+	POP	HL
+	PUSH	HL
+	LD	DE, 00016H
+	ADD	HL, DE
+	LD	E,(HL)
+	INC	HL
+	LD	D,(HL)
+	PUSH	DE
+	POP	IX
+;	LD	IX, WKIX
+
+;
+; 実行アドレス
+;
+	POP	HL
+	PUSH	HL
+	LD	DE,0018H
+	ADD	HL, DE
+	LD	E,(HL)
+	INC	HL
+	LD	D,(HL)
+	LD	(BOOT_JUMP_ADDRESS + 1), DE
 ;
 	PUSH	BC
 	CALL	BC2HEX
@@ -973,8 +996,118 @@ CLWLP2:
 	OR	C
 	JR	NZ,CLWLP2
 	RET
-;
-;
+
+; READ FILE
+; LD	A, ドライブ番号
+; LD	HL, ファイルネーム
+; LD	IX, BUFFER(最低2KB)
+; Result Cyフラグ (1:エラー, 0:正常読み込み)
+READ_FILE:
+	PUSH	HL
+	LD	IY, WKIY
+	LD	(DIRNO), A	; ドライブ番号
+	LD	A, 000h
+	LD	(IY+2), A
+	LD	A, 008h
+	LD	(IY+3), A	; 読み込みサイズ2Kバイト
+	LD	BC, 16
+	LD	(STREC), BC	; レコード16 (DIR)
+	CALL	BREAD
+	PUSH	AF
+	CALL	MOFF
+	POP	AF
+	POP	HL
+	RET	C		; Cyが1ならディレクトリ読み込みエラー
+	LD	B, 64
+	PUSH	IX
+	POP	DE
+READ_FILE_1:
+	LD	A, (DE)
+	INC	DE
+	CP	001h
+	JR	NZ, READ_FILE_2 ; モードが01h(Obj)以外は無視
+	PUSH	DE
+	PUSH	HL
+	CALL	CMP_TEXT
+	POP	HL
+	POP	DE
+	JR	C, READ_FILE_3
+READ_FILE_2:
+	; DE = DE + 31
+	EX	DE, HL
+	PUSH	BC
+	LD	BC, 31
+	ADD	HL, BC
+	POP	BC
+	EX	DE, HL
+	; ループ判定
+	DEC	B
+	JR	NZ, READ_FILE_1
+	SCF
+	RET			; ファイルが見つからない
+READ_FILE_3:
+	; 読み込むファイルを見つけた
+	; DE = DE + 19
+	LD	BC, 19
+	EX	DE, HL
+	ADD	HL, BC
+	EX	DE, HL
+	; 読み込みサイズ取得
+	LD	A, (DE)
+	LD	(IY+2), A	; 読み込みサイズ下位バイト設定
+	INC	DE
+	LD	A, (DE)
+	LD	(IY+3), A	; 読み込みサイズ上位バイト設定
+	INC	DE
+	; 読み込みアドレス取得
+;	LD	A, (DE)
+	INC	DE
+;	LD	C, A
+;	LD	A, (DE)
+	INC	DE
+;	LD	B, A
+;	PUSH	BC
+;	POP	IX
+	; DE = DE + 6
+	LD	BC, 6
+	EX	DE, HL
+	ADD	HL, BC
+	EX	DE, HL
+	; 読み込み開始レコード番号
+	LD	A, (DE)
+	INC	DE
+	LD	C, A
+	LD	A, (DE)
+	INC	DE
+	LD	B, A
+	LD	(STREC), BC	; レコード番号設定
+	; 読み込み開始
+	CALL	BREAD
+	PUSH	AF
+	CALL	MOFF
+	POP	AF
+	RET
+
+; 0Dhで終わっている文字列を比較する
+; LD	DE, 比較文字列1, 0Dh
+; LD	HL, 比較文字列2, 0Dh
+; Result Cyフラグ (0: 違う, 1: 同じ)
+CMP_TEXT:
+CMP_TEXT_1:
+	LD	A, (DE)
+	CP	(HL)
+	JR	NZ, CMP_TEXT_2
+	CP	00Dh
+	INC	DE
+	INC	HL
+	JR	NZ, CMP_TEXT_1
+	JR	CMP_TEXT_3
+CMP_TEXT_2:
+	OR	A
+	RET
+CMP_TEXT_3:
+	SCF
+	RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; メッセージ等
@@ -1053,15 +1186,34 @@ START2:
 ;
 	CALL	MOFF		; モーター停止
 
+	LD	A,(MODE)
+	CP	MD2500
+	JR	NZ, START2_NOT2500
+	; MZ-2500で起動した場合は実行時のメモリマップを2,2,3,4,5,6,7,8から0,2,3,4,5,6,7,8に修正する
+	XOR	A
+	OUT	(0B4H), A
+	OUT	(0B5H), A
+
+START2_NOT2500:
 	; R2SIZEが0より大きければ2回目の読み込みをする
 	LD	HL, (R2SIZE)
 	LD	A, H
 	OR	L
-	JP	Z, NOTREAD2ND
-	CALL	READ2ND
-NOTREAD2ND:
+	JP	Z, BOOT_JUMP
+	JP	READ2ND
 ;
+BOOT_JUMP:
+	LD	HL, (BOOT_JUMP_ADDRESS + 1)
+	LD	A,H
+	OR	L
+	JR	Z, RESET ; 実行アドレスが0000hの場合はリセットする
+
+	; 実行アドレスが0000h以外の場合はジャンプする
+BOOT_JUMP_ADDRESS:
+	JP	0000h
+
 ;	読込んだプログラムへの制御移行（リセットを使用）
+RESET:
 	IN	A,(0E2H)
 	SET	1,A 		; ノーマルリセット
 	OUT	(0E2H),A
