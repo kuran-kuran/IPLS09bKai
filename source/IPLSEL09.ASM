@@ -1125,7 +1125,7 @@ MZ2000:	DB	"IPL ¾Ú¸À- << MZ-2000/2200 Ó-ÄÞ >>       "
 MZ2500:	DB	"IPL ¾Ú¸À- << MZ-2500 Ó-ÄÞ >>            "
 	DB	00DH
 ;
-VERS:	DB	"  Ver0.9bKai 2022.02.15 (c) kuran-kuran"
+VERS:	DB	"  Ver0.9bKai 2022.04.18 (c) kuran-kuran"
 	DB	00DH
 ;
 MZ25W:	DB	"MZ-2500Ó-ÄÞÃÞÉ ÄÞ³»¶¸ÆÝÊ ¼Ã²Ï¾Ý m(- -;)m"
