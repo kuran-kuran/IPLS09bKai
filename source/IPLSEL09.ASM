@@ -118,8 +118,8 @@ IPLPROE:
 	DI
 ;
 ; IPL BOOTドライブ保存
-	LD	A,(0FFECH - 08000H)
-	LD	(DIRNO),A
+;	LD	A,(0FFECH - 08000H)
+;	LD	(DIRNO),A
 ;
 ; 8255 初期化
 	LD	A,082H		; 8255 A=out B=in C=out
@@ -254,10 +254,6 @@ B1SCTE:
 ; B2SCT
 ;
 ;
-;	IPL BOOTドライブ保存 (MZ-2500 80Bモード対策)
-	LD	A,(0FFECH - 08000H)
-	LD	(DIRNO),A
-
 ;	画面全体クリア
 	LD	HL,0
 	CALL	VRCLR
@@ -273,7 +269,29 @@ B1SCTE:
 ;	LD	HL,40 * 18
 ;	LD	BC,40
 ;	CALL	VRDISP
-;
+
+	; ワークエリア取得のためメモリマップを変更
+	XOR	A
+	OUT	(0B4H),A
+	OUT	(0B5H),A
+
+;	IPL BOOTドライブ保存 (MZ-2500モード)
+	LD	A,(084AH)
+	CP	'F'
+	JR	Z, ISFDD
+	XOR	A
+	JR	SET_DIRNO
+ISFDD:
+	LD	A,(0846H)
+SET_DIRNO:
+	LD	(DIRNO),A ; CMTからの起動の場合はドライブ1にする
+
+	; メモリマップを戻す
+	XOR	A
+	OUT	(0B4H),A
+	LD	A, 2
+	OUT	(0B5H),A
+
 ;	アンダーバー／トップバー切替
 ;	2500モード時は、'_'がそのまま表示されるので書換え
 ;	80B/2000モード時は '~' になるので次行表示をデフォルトにしてる
@@ -287,6 +305,10 @@ B1SCTE:
 ;
 ;
 NOT2500:
+;	IPL BOOTドライブ保存 (MZ-80B/2000)
+	LD	A,(0FFECH - 08000H)
+	LD	(DIRNO),A
+
 ;	MZ-80Bモードか？
 	CP	MD80B
 	JR	NZ,NOT80B
@@ -1189,10 +1211,10 @@ START2:
 	LD	A,(MODE)
 	CP	MD2500
 	JR	NZ, START2_NOT2500
-	; MZ-2500で起動した場合は実行時のメモリマップを2,2,3,4,5,6,7,8から0,2,3,4,5,6,7,8に修正する
+	; MZ-2500で起動した場合はメモリマップを2,2,3,4,5,6,7,8から0,2,3,4,5,6,7,8に修正する
 	XOR	A
-	OUT	(0B4H), A
-	OUT	(0B5H), A
+	OUT	(0B4H),A
+	OUT	(0B5H),A
 
 START2_NOT2500:
 	; R2SIZEが0より大きければ2回目の読み込みをする
